@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Projet - Seshat v1.0</title>
+    <link rel="stylesheet" href="styles/formatS.css">
+</head>
+
+<body>
+
+    <div>
+
+        <div id="cover-page">
+            <div>
+                <div class="logo-container">
+                    <img src="Seshat_AI_logo.svg" alt="Logo Seshat">
+                </div>
+                <h1 class="project-title">Seshat</h1>
+                <p class="project-subtitle">Votre Assistant IA pour la Création de Contenu</p>
+            </div>
+
+            <div class="document-info">
+                <p>Document Projet</p>
+                <p>Version 1.0</p>
+                <p>Mai 2024</p>
+            </div>
+
+            <div class="author-info">
+                <p><strong>Auteur :</strong> de SOUZA Schadrac Félicio C.</p>
+                <p><strong>Rôle :</strong> Développeur Web</p>
+            </div>
+        </div>
+
+        <header class="page-header">
+            <h1>Document Projet : Seshat v1.0</h1>
+        </header>
+
+        <section id="introduction" class="main-section">
+            <h2>1. Introduction et Objectifs Détaillés</h2>
+            <p>Dans un monde où la création de contenu est omniprésente, les scénaristes, écrivains, blogueurs et autres
+                créateurs font face à des défis constants : trouver l'inspiration, structurer leurs idées, maintenir la
+                cohérence narrative, et peaufiner leur style. Seshat, nommé d'après la déesse égyptienne de l'écriture
+                et de la sagesse, a été conçu pour répondre à ces besoins spécifiques.</p>
+            <p>Seshat n'est pas un simple chatbot générique. Il s'agit d'une application web spécialisée, propulsée par
+                l'intelligence artificielle avancée de Google Gemini, et pensée comme un véritable partenaire créatif.
+                Son interface conversationnelle permet un dialogue fluide et naturel, facilitant l'exploration d'idées,
+                la génération de synopsis, le développement de personnages complexes, la recherche de formulations
+                alternatives, ou encore la simple discussion autour d'un blocage créatif.</p>
+            <h3>Objectifs de la Version 1.0</h3>
+            <p>Cette première version de Seshat vise à établir une base solide et fonctionnelle, en se concentrant sur
+                les objectifs suivants :</p>
+            <ul>
+                <li><strong>Fournir une plateforme IA fiable :</strong> Intégrer de manière stable et performante l'API
+                    Google Gemini pour offrir des capacités de génération de texte avancées et pertinentes au contexte
+                    créatif.</li>
+                <li><strong>Offrir une gestion de conversation intuitive :</strong> Permettre aux utilisateurs de
+                    démarrer facilement de nouvelles sessions de chat, de visualiser clairement l'historique des
+                    échanges, et d'interagir sans friction avec l'IA.</li>
+                <li><strong>Assurer la persistance et l'organisation :</strong> Sauvegarder automatiquement les
+                    conversations et les messages dans une base de données structurée (Supabase), et générer des titres
+                    pertinents pour faciliter la navigation future.</li>
+                <li><strong>Garantir la sécurité et la confidentialité :</strong> Mettre en place un système
+                    d'authentification robuste et des politiques d'accès aux données (Row Level Security) pour protéger
+                    les informations des utilisateurs.</li>
+                <li><strong>Proposer une gestion de compte simple :</strong> Permettre aux utilisateurs de gérer les
+                    informations de base de leur profil (nom d'utilisateur) et de contrôler leur compte (suppression).
+                </li>
+                <li><strong>Optimiser pour le déploiement :</strong> Concevoir une architecture compatible avec un
+                    déploiement serverless moderne (Vercel) pour assurer scalabilité et facilité de maintenance.</li>
+            </ul>
+            <p>L'ambition finale est de faire de Seshat un outil indispensable dans la boîte à outils de tout créateur
+                de contenu, en alliant la puissance de l'IA à une expérience utilisateur centrée sur les besoins
+                spécifiques de l'écriture et de la narration.</p>
+        </section>
+
+        <section id="fonctionnalites" class="main-section">
+            <h2>2. Fonctionnalités Clés (v1.0)</h2>
+            <p>La version 1.0 de Seshat met à disposition un ensemble cohérent de fonctionnalités essentielles pour
+                l'assistance créative via IA.</p>
+            <h3>2.1. Gestion des Utilisateurs et Authentification</h3>
+            <ul>
+                <li><strong>Inscription Sécurisée :</strong> Permet aux nouveaux utilisateurs de créer un compte en
+                    fournissant une adresse email valide, un mot de passe respectant les critères de sécurité, et un nom
+                    d'utilisateur unique. L'intégration avec Supabase Auth assure la validation de l'email (si activée)
+                    et le stockage sécurisé des identifiants.</li>
+                <li><strong>Connexion :</strong> Les utilisateurs existants peuvent se connecter via leur email et mot
+                    de passe. La gestion de session est assurée par Supabase et le contexte React
+                    (<code>AuthContext</code>).</li>
+                <li><strong>Déconnexion :</strong> Une option claire pour mettre fin à la session utilisateur actuelle.
+                </li>
+                <li><strong>Création Automatique de Profil :</strong> Un trigger SQL (<code>handle_new_user</code>) crée
+                    automatiquement une entrée associée dans la table <code>profils</code> lors de l'inscription,
+                    initialisant les
+                    paramètres par défaut.</li>
+            </ul>
+            <h3>2.2. Gestion du Profil et du Compte</h3>
+            <ul>
+                <li><strong>Affichage des Informations :</strong> L'utilisateur peut consulter son nom d'utilisateur
+                    actuel et son adresse email dans une section dédiée des paramètres.</li>
+                <li><strong>Modification du Nom d'Utilisateur :</strong>
+                    <ul>
+                        <li>Possibilité de changer le nom d'utilisateur via un champ dédié dans les paramètres.</li>
+                        <li>Restriction temporelle : le changement n'est autorisé qu'une fois tous les 7 jours. La date
+                            du dernier changement est stockée dans <code>profils.last_username_change</code>.</li>
+                        <li>L'interface utilisateur indique clairement si le changement est possible et, sinon, le
+                            nombre de jours restants avant la prochaine autorisation.</li>
+                        <li>La mise à jour affecte à la fois la table <code>profils</code> et les métadonnées dans
+                            <code>auth.users</code>.
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Avatar Utilisateur :</strong> L'initiale de l'utilisateur (dérivée du nom d'utilisateur ou
+                    de l'email) est affichée dans l'interface de chat pour distinguer ses messages.</li>
+                <li><strong>Suppression de Compte :</strong>
+                    <ul>
+                        <li>Option sécurisée dans les paramètres pour initier la suppression du compte.</li>
+                        <li>Une confirmation explicite est demandée à l'utilisateur en raison du caractère irréversible
+                            de l'action.</li>
+                        <li>La suppression (gérée via une fonction Edge recommandée) efface les données de la table
+                            <code>profils</code>, les <code>conversations</code> et <code>messages</code> associés (via
+                            <code>ON DELETE CASCADE</code>), et supprime
+                            l'utilisateur de <code>auth.users</code>.
+                        </li>
+                        <li>L'utilisateur est automatiquement déconnecté après la suppression réussie.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>2.3. Gestion des Conversations</h3>
+            <ul>
+                <li><strong>Création de Conversation :</strong> Initiée par l'envoi du premier message depuis une
+                    interface dédiée (potentiellement la page d'accueil ou une page spécifique). Le système crée une
+                    nouvelle conversation (table <code>conversations</code>) liée à l'utilisateur et enregistre le
+                    premier message
+                    (table <code>messages</code>).</li>
+                <li><strong>Génération Automatique de Titre :</strong> Après la création, un appel asynchrone est
+                    effectué à l'API <code>/api/generate-title</code>. Celle-ci utilise Gemini pour générer un titre
+                    court basé sur
+                    le premier message et met à jour le champ <code>title</code> de la conversation dans la base de
+                    données.</li>
+                <li><strong>Accès aux Conversations Existantes :</strong> L'utilisateur est redirigé vers une URL
+                    spécifique (<code>/chat/[conversationId]</code>) après la création, ou peut y accéder via une liste
+                    de
+                    conversations (si implémentée).</li>
+            </ul>
+            <h3>2.4. Interface de Chat</h3>
+            <ul>
+                <li><strong>Affichage de l'Historique :</strong> Charge et affiche l'ensemble des messages (utilisateurs
+                    envoyés avec 'user' et IA avec 'assistant') pour l'ID de conversation courant, triés
+                    chronologiquement.</li>
+                <li><strong>Zone de Saisie :</strong> Composant <code>ChatInput</code> permettant à l'utilisateur de
+                    taper son
+                    message.</li>
+                <li><strong>Envoi de Message :</strong>
+                    <ul>
+                        <li>Le message utilisateur est ajouté immédiatement à l'interface pour une expérience réactive.
+                        </li>
+                        <li>Le message est sauvegardé dans la table <code>messages</code> avec <code>sender</code> =
+                            'user'.</li>
+                        <li>Un appel est effectué à l'API <code>/api/chat</code> avec le nouveau prompt et l'historique
+                            formaté.
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Réception et Affichage de la Réponse IA :</strong>
+                    <ul>
+                        <li>Affichage d'un indicateur de chargement (<code>SmartTypingAnimation</code>) pendant que l'IA
+                            génère la
+                            réponse.</li>
+                        <li>La réponse textuelle reçue de l'API <code>/api/chat</code> est ajoutée à l'interface.</li>
+                        <li>La réponse est sauvegardée dans la table <code>messages</code> avec <code>sender</code> =
+                            'model'.</li>
+                    </ul>
+                </li>
+                <li><strong>Rendu Markdown :</strong> Le composant <code>MarkdownRenderer</code> interprète le contenu
+                    des messages
+                    de l'IA et l'affiche avec un formatage riche (support des titres, listes, code, etc.). La coloration
+                    syntaxique est appliquée aux blocs de code.</li>
+                <li><strong>Options sur les Messages :</strong> Possibilité (même si partiellement implémentée) de
+                    copier le contenu d'un message, ou potentiellement de relancer la génération d'une réponse IA
+                    (Retry).</li>
+            </ul>
+            <h3>2.5. Intégration de l'IA (Google Gemini)</h3>
+            <ul>
+                <li><strong>Génération de Réponses :</strong> Utilisation de l'API Gemini via le SDK
+                    <code>@google/generative-ai</code>. Le modèle <code>gemini-1.5-flash-latest</code> est utilisé pour
+                    sa rapidité et ses
+                    capacités. Les appels incluent le prompt utilisateur, l'historique formaté et les instructions
+                    système.
+                </li>
+                <li><strong>Instructions Système :</strong> Un fichier <code>instructions.md</code> (ou les instructions
+                    par
+                    défaut) définit le rôle ("Tu es Seshat..."), le format de sortie attendu (Markdown riche), et le
+                    style de communication de l'IA.</li>
+                <li><strong>Génération de Titres :</strong> Un prompt spécifique (<code>TITLE_GENERATION_PROMPT</code>)
+                    est utilisé
+                    avec un modèle Gemini (potentiellement le même, <code>gemini-1.5-flash-latest</code>) pour créer des
+                    titres
+                    concis.</li>
+                <li><strong>Configurations :</strong> Paramètres de génération (<code>temperature</code>,
+                    <code>maxOutputTokens</code>, etc.)
+                    et de sécurité (<code>safetySettings</code>) configurés pour équilibrer créativité et sécurité.</li>
+                <li><strong>Option "Deep Thinking" (Concept) :</strong> Possibilité (via un booléen envoyé à l'API)
+                    d'ajuster potentiellement les paramètres de génération (ex: <code>maxOutputTokens</code>,
+                    <code>temperature</code>) pour
+                    des réponses plus élaborées, bien que l'impact exact dépende de la logique implémentée dans
+                    <code>getAIResponseFromGemini</code>.
+                </li>
+            </ul>
+        </section>
+
+        <section id="architecture" class="main-section">
+            <h2>3. Architecture Technique Détaillée</h2>
+            <p>L'architecture de Seshat v1.0 a été pensée pour la modernité, la performance et la maintenabilité, en
+                s'appuyant sur un écosystème JavaScript/TypeScript populaire et des services cloud spécialisés.</p>
+            <h3>3.1. Composants Principaux</h3>
+            <ul>
+                <li><strong>Application Frontend (Next.js / React) :</strong>
+                    <ul>
+                        <li>Responsable de l'interface utilisateur (UI) et de l'expérience utilisateur (UX).</li>
+                        <li>Utilise React pour construire des composants UI réutilisables (ex: `ChatInterface`,
+                            `MessageItem`, `ChatInput`, `MarkdownRenderer`, composants de Settings).</li>
+                        <li>Tire parti du framework Next.js pour ses fonctionnalités avancées :<ul>
+                                <li><strong>App Router :</strong> Structure moderne pour l'organisation des pages et des
+                                    composants
+                                    (incluant Server Components et Client Components).</li>
+                                <li><strong>Rendu Hybride :</strong> Combinaison de rendu côté serveur (SSR) ou de
+                                    génération
+                                    statique (SSG) pour les pages principales (ex: pages d'authentification) et de rendu
+                                    côté client (CSR) pour les parties dynamiques comme l'interface de chat.</li>
+                                <li><strong>API Routes (Route Handlers) :</strong> Pour gérer la logique backend
+                                    directement au sein
+                                    du projet Next.js.</li>
+                            </ul>
+                        </li>
+                        <li>Interagit directement avec Supabase (`@supabase/supabase-js`) pour l'authentification et la
+                            récupération/sauvegarde de données non sensibles ou permises par RLS.</li>
+                        <li>Communique avec les API Routes Next.js (`/api/chat`, `/api/generate-title`) pour les
+                            opérations nécessitant une logique serveur ou l'accès à des clés secrètes (Gemini API Key).
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>API Backend (Next.js API Routes) :</strong>
+                    <ul>
+                        <li>Remplace le serveur Express dédié. La logique backend est intégrée via les Route Handlers de
+                            Next.js.</li>
+                        <li>Hébergée sur Vercel en tant que fonctions serverless, s'exécutant à la demande pour chaque
+                            requête API.</li>
+                        <li>Responsable de la communication sécurisée avec l'API Google Gemini (utilisation de la clé
+                            API secrète).</li>
+                        <li>Responsable des opérations sensibles sur la base de données (utilisation de la clé de
+                            service Supabase si nécessaire pour outrepasser RLS, ex: mise à jour du titre).</li>
+                        <li>Reçoit les requêtes du frontend, les traite (validation, appel IA/DB), et renvoie des
+                            réponses JSON standardisées.</li>
+                        <li>Utilise `@google/generative-ai` pour interagir avec Gemini et `@supabase/supabase-js` (avec
+                            clé service) pour Supabase.</li>
+                    </ul>
+                </li>
+                <li><strong>Plateforme BaaS (Supabase) :</strong>
+                    <ul>
+                        <li>Fournit les services backend essentiels :<ul>
+                                <li><strong>Authentification :</strong> Gestion complète des utilisateurs (inscription,
+                                    connexion,
+                                    sessions JWT, réinitialisation de mot de passe, etc.).</li>
+                                <li><strong>Base de Données PostgreSQL :</strong> Stockage persistant et structuré des
+                                    profils,
+                                    conversations et messages. La sécurité est assurée par RLS.</li>
+                                <li><strong>Stockage d'Objets (Storage) :</strong> Utilisé pour héberger les avatars
+                                    utilisateurs (si
+                                    cette fonctionnalité est activée). Politiques de sécurité pour contrôler l'accès.
+                                </li>
+                                <li><strong>(Recommandé) Fonctions Edge :</strong> Pour exécuter du code serveur
+                                    sécurisé et
+                                    atomique, idéalement pour la suppression de compte ou d'autres opérations complexes
+                                    nécessitant des droits élevés.</li>
+                            </ul>
+                        </li>
+                        <li>Agit comme la source de vérité unique pour les données de l'application.</li>
+                    </ul>
+                </li>
+                <li><strong>Service IA (Google Gemini API) :</strong>
+                    <ul>
+                        <li>Fournit les capacités de génération de langage naturel.</li>
+                        <li>Contacté exclusivement par les API Routes Next.js via le SDK officiel.</li>
+                        <li>La configuration (modèle, instructions système, sécurité) est gérée côté serveur dans les
+                            API Routes ou les utilitaires partagés.</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>3.2. Flux de Données Typique (Envoi de Message)</h3>
+            <ol>
+                <li>L'utilisateur tape un message dans `ChatInput` (Frontend).</li>
+                <li>À la soumission (`handleSubmit` dans `ChatInterface`) :<ul>
+                        <li>Le message utilisateur est ajouté à l'état local React (`messages`).</li>
+                        <li>L'interface est mise à jour immédiatement (optimistic update).</li>
+                        <li>Un appel asynchrone `saveMessageToDB` est fait pour enregistrer le message ('user') dans
+                            Supabase via `@supabase/supabase-js`.</li>
+                        <li>La fonction `getAIResponse` est appelée avec le prompt et l'historique actuel.</li>
+                    </ul>
+                </li>
+                <li>Dans `getAIResponse` (Frontend) :<ul>
+                        <li>Affichage de l'indicateur `isThinking`.</li>
+                        <li>L'historique est formaté.</li>
+                        <li>Une requête `fetch` est envoyée à l'API Route Next.js `/api/chat` (méthode POST) avec le
+                            prompt et l'historique (et potentiellement des fichiers via FormData).</li>
+                    </ul>
+                </li>
+                <li>Dans `app/api/chat/route.ts` (Backend/Serverless) :<ul>
+                        <li>Le handler POST reçoit la requête.</li>
+                        <li>Initialisation des services (`initializeServices` dans `lib/server-utils`).</li>
+                        <li>Parsing du corps de la requête (FormData ou JSON).</li>
+                        <li>Appel à `getAIResponseFromGemini` (dans `lib/server-utils`) avec les données extraites.</li>
+                        <li>`getAIResponseFromGemini` communique avec l'API Google Gemini.</li>
+                        <li>La réponse textuelle de Gemini est retournée par la fonction utilitaire.</li>
+                        <li>Le handler API Route formate la réponse en JSON (`{ response: "..." }`) et l'envoie au
+                            client (`NextResponse.json`).</li>
+                    </ul>
+                </li>
+                <li>Retour dans `getAIResponse` (Frontend) :<ul>
+                        <li>La réponse JSON est reçue.</li>
+                        <li>Un nouvel objet message ('assistant') est créé.</li>
+                        <li>L'état local `messages` est mis à jour, affichant la réponse IA.</li>
+                        <li>Un appel asynchrone `saveMessageToDB` est fait pour enregistrer le message ('model') dans
+                            Supabase.</li>
+                        <li>L'indicateur `isThinking` est désactivé.</li>
+                    </ul>
+                </li>
+            </ol>
+            <h3>3.3. Considérations de Sécurité</h3>
+            <ul>
+                <li><strong>Authentification :</strong> Gérée par Supabase Auth, utilisant des JWT sécurisés (HttpOnly
+                    si
+                    SSR/Middleware est utilisé).</li>
+                <li><strong>Autorisation (Base de Données) :</strong> Supabase Row Level Security (RLS) est activée sur
+                    toutes les
+                    tables (`profils`, `conversations`, `messages`). Les politiques garantissent que les utilisateurs ne
+                    peuvent accéder/modifier que leurs propres données.</li>
+                <li><strong>Clés API Secrètes :</strong> Les clés `GEMINI_API_KEY` et `SUPABASE_SERVICE_ROLE_KEY` sont
+                    stockées de
+                    manière sécurisée comme variables d'environnement Vercel et ne sont accessibles que par les API
+                    Routes côté serveur. Elles ne sont jamais exposées au client.</li>
+                <li><strong>Validation des Entrées :</strong> Les API Routes doivent valider les données reçues du
+                    client (ex:
+                    présence de `prompt`, format de l'`historique`) pour prévenir les erreurs et les abus potentiels.
+                </li>
+                <li><strong>Sanitization :</strong> `rehype-sanitize` est utilisé dans `MarkdownRenderer` pour nettoyer
+                    le HTML
+                    généré à partir du Markdown de l'IA, prévenant les attaques XSS si l'IA générait du HTML/script
+                    malveillant.</li>
+                <li><strong>CORS :</strong> Géré automatiquement par Vercel pour les API Routes du même projet. Aucun
+                    besoin de
+                    configuration `cors` explicite dans les API Routes elles-mêmes.</li>
+                <li><strong>Opérations Sensibles :</strong> La suppression de compte est idéalement gérée par une
+                    fonction Edge
+                    Supabase, qui s'exécute dans un environnement sécurisé et peut utiliser la clé de service sans
+                    l'exposer.</li>
+            </ul>
+        </section>
+
+        <section id="database" class="main-section">
+            <h2>4. Schéma de la Base de Données Détaillé</h2>
+            <p>La base de données PostgreSQL gérée par Supabase est le cœur de la persistance des données pour Seshat.
+                Le schéma a été simplifié pour se concentrer sur les entités essentielles, avec une attention
+                particulière portée à la sécurité via RLS et aux relations entre les tables.</p>
+            <h3>Principes Généraux</h3>
+            <ul>
+                <li><strong>Schéma Public :</strong> Toutes les tables résident dans le schéma `public` standard de
+                    Supabase.</li>
+                <li><strong>UUID :</strong> Des identifiants uniques universels (UUID v4 générés via
+                    `extensions.uuid-ossp`) sont utilisés comme clés primaires pour éviter les conflits et faciliter la
+                    distribution.</li>
+                <li><strong>Timestamps :</strong> Utilisation de `TIMESTAMPTZ` (Timestamp with Time Zone) pour une
+                    gestion cohérente des dates et heures à travers différents fuseaux horaires. Les colonnes
+                    `created_at` et `updated_at` sont gérées automatiquement (valeurs par défaut et triggers).</li>
+                <li><strong>Row Level Security (RLS) :</strong> Activée sur toutes les tables pour garantir que les
+                    utilisateurs n'accèdent qu'à leurs propres données. Les politiques RLS utilisent la fonction
+                    `auth.uid()` pour identifier l'utilisateur authentifié.</li>
+                <li><strong>Clés Étrangères et Cascade :</strong> Des contraintes de clé étrangère (`FOREIGN KEY`) sont
+                    définies pour maintenir l'intégrité référentielle. L'option `ON DELETE CASCADE` est utilisée pour
+                    que la suppression d'un utilisateur dans `auth.users` entraîne la suppression automatique de son
+                    profil et de ses conversations (et par cascade, de ses messages).</li>
+            </ul>
+            <h3>Table : <code>profils</code></h3>
+            <p>Cette table étend la table `auth.users` de Supabase en stockant des métadonnées publiques, des paramètres
+                spécifiques à l'application, et des informations d'abonnement essentielles.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Colonne</th>
+                        <th>Type</th>
+                        <th>Contraintes</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>id</code></td>
+                        <td>UUID</td>
+                        <td>PK, FK -> auth.users(id) ON DELETE CASCADE</td>
+                        <td>Identifiant unique, synchronisé avec l'utilisateur authentifié.</td>
+                    </tr>
+                    <tr>
+                        <td><code>email</code></td>
+                        <td>TEXT</td>
+                        <td>UNIQUE, NOT NULL</td>
+                        <td>Email principal de l'utilisateur (redondant mais utile pour certaines jointures/affichages).
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>username</code></td>
+                        <td>TEXT</td>
+                        <td>UNIQUE</td>
+                        <td>Nom d'utilisateur public, modifiable par l'utilisateur (avec contrainte de temps).</td>
+                    </tr>
+                    <tr>
+                        <td><code>mode</code></td>
+                        <td>TEXT</td>
+                        <td>NOT NULL, DEFAULT 'standard'</td>
+                        <td>Paramètre applicatif (ex: style de réponse IA, thème UI...).</td>
+                    </tr>
+                    <tr>
+                        <td><code>deep_think_enabled</code></td>
+                        <td>BOOLEAN</td>
+                        <td>NOT NULL, DEFAULT FALSE</td>
+                        <td>Flag pour activer/désactiver le mode "Deep Thinking".</td>
+                    </tr>
+                    <tr>
+                        <td><code>rate_limit_enabled</code></td>
+                        <td>BOOLEAN</td>
+                        <td>NOT NULL, DEFAULT TRUE</td>
+                        <td>Flag pour activer/désactiver une éventuelle limitation de requêtes IA.</td>
+                    </tr>
+                    <tr>
+                        <td><code>plan</code></td>
+                        <td>TEXT</td>
+                        <td>NOT NULL, DEFAULT 'free'</td>
+                        <td>Identifiant du plan d'abonnement (ex: 'free', 'pro_monthly').</td>
+                    </tr>
+                    <tr>
+                        <td><code>subscription_status</code></td>
+                        <td>TEXT</td>
+                        <td>NOT NULL, DEFAULT 'free'</td>
+                        <td>Statut actuel de l'abonnement (ex: 'active', 'trialing', 'canceled').</td>
+                    </tr>
+                    <tr>
+                        <td><code>stripe_customer_id</code></td>
+                        <td>TEXT</td>
+                        <td>UNIQUE</td>
+                        <td>Identifiant client Stripe (si intégration paiement).</td>
+                    </tr>
+                    <tr>
+                        <td><code>stripe_subscription_id</code></td>
+                        <td>TEXT</td>
+                        <td>UNIQUE</td>
+                        <td>Identifiant de l'abonnement Stripe actif (si intégration paiement).</td>
+                    </tr>
+                    <tr>
+                        <td><code>subscription_ends_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NULLable</td>
+                        <td>Date d'expiration de l'abonnement ou de la période d'essai.</td>
+                    </tr>
+                    <tr>
+                        <td><code>last_username_change</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NULLable</td>
+                        <td>Timestamp de la dernière modification réussie du nom d'utilisateur.</td>
+                    </tr>
+                    <tr>
+                        <td><code>created_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT now()</td>
+                        <td>Date et heure de création du profil (via trigger).</td>
+                    </tr>
+                    <tr>
+                        <td><code>updated_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT now()</td>
+                        <td>Date et heure de la dernière mise à jour (via trigger).</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Politiques RLS (<code>profils</code>) :</h4>
+            <ul>
+                <li><code>SELECT</code>: L'utilisateur peut lire son propre profil (`auth.uid() = id`).</li>
+                <li><code>UPDATE</code>: L'utilisateur peut mettre à jour son propre profil (`auth.uid() = id`).</li>
+                <li><code>INSERT</code>: Gérée par un trigger SQL (`handle_new_user` avec `SECURITY DEFINER`) lors de la
+                    création de l'utilisateur dans `auth.users`.</li>
+                <li><code>DELETE</code>: Gérée par `ON DELETE CASCADE` depuis `auth.users`.</li>
+            </ul>
+            <h4>Triggers (<code>profils</code>) :</h4>
+            <ul>
+                <li><code>update_profils_updated_at</code>: Met à jour `updated_at` avant chaque `UPDATE`.</li>
+            </ul>
+            <h3>Table : <code>conversations</code></h3>
+            <p>Chaque enregistrement représente une session de chat distincte, appartenant soit à un utilisateur
+                authentifié, soit (potentiellement) à une session anonyme.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Colonne</th>
+                        <th>Type</th>
+                        <th>Contraintes</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>id</code></td>
+                        <td>UUID</td>
+                        <td>PK, DEFAULT uuid_generate_v4()</td>
+                        <td>Identifiant unique de la conversation.</td>
+                    </tr>
+                    <tr>
+                        <td><code>user_id</code></td>
+                        <td>UUID</td>
+                        <td>FK -> auth.users(id) ON DELETE CASCADE, NULLable</td>
+                        <td>Propriétaire de la conversation (si authentifié).</td>
+                    </tr>
+                    <tr>
+                        <td><code>anonymous_session_id</code></td>
+                        <td>TEXT</td>
+                        <td>UNIQUE, NULLable</td>
+                        <td>Identifiant unique pour une session anonyme (si géré).</td>
+                    </tr>
+                    <tr>
+                        <td><code>title</code></td>
+                        <td>TEXT</td>
+                        <td>NULLable</td>
+                        <td>Titre généré automatiquement par l'IA basé sur le premier message.</td>
+                    </tr>
+                    <tr>
+                        <td><code>created_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT now()</td>
+                        <td>Date et heure de création de la conversation.</td>
+                    </tr>
+                    <tr>
+                        <td><code>updated_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT now()</td>
+                        <td>Date et heure de la dernière interaction ou mise à jour (via trigger).</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"><i>Contrainte CHECK : <code>user_id</code> OU <code>anonymous_session_id</code>
+                                doit être non-NULL, mais pas les deux.</i></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Politiques RLS (<code>conversations</code>) :</h4>
+            <ul>
+                <li><code>SELECT</code>: L'utilisateur authentifié peut lire ses propres conversations (`auth.uid() =
+                    user_id`). Une politique spécifique permet la lecture des conversations anonymes si l'ID de session
+                    est connu (sécurité gérée par l'application).</li>
+                <li><code>INSERT</code>: L'utilisateur authentifié peut insérer pour lui-même. Une politique spécifique
+                    permet l'insertion anonyme si `user_id` est NULL et `anonymous_session_id` est fourni.</li>
+                <li><code>UPDATE</code>: L'utilisateur authentifié peut mettre à jour le `title` ou `updated_at` de ses
+                    propres conversations.</li>
+                <li><code>DELETE</code>: L'utilisateur authentifié peut supprimer ses propres conversations.</li>
+            </ul>
+            <h4>Triggers (<code>conversations</code>) :</h4>
+            <ul>
+                <li><code>update_conversations_updated_at</code>: Met à jour `updated_at` avant chaque `UPDATE`.</li>
+            </ul>
+            <h4>Index (<code>conversations</code>) :</h4>
+            <ul>
+                <li>Index sur `user_id` pour accélérer la récupération des conversations d'un utilisateur.</li>
+                <li>Index sur `anonymous_session_id` si les conversations anonymes sont implémentées.</li>
+            </ul>
+            <h3>Table : <code>messages</code></h3>
+            <p>Contient chaque échange individuel (prompt utilisateur ou réponse IA) au sein d'une conversation.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Colonne</th>
+                        <th>Type</th>
+                        <th>Contraintes</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>id</code></td>
+                        <td>UUID</td>
+                        <td>PK, DEFAULT uuid_generate_v4()</td>
+                        <td>Identifiant unique du message.</td>
+                    </tr>
+                    <tr>
+                        <td><code>conversation_id</code></td>
+                        <td>UUID</td>
+                        <td>FK -> conversations(id) ON DELETE CASCADE, NOT NULL</td>
+                        <td>Lien vers la conversation parente.</td>
+                    </tr>
+                    <tr>
+                        <td><code>sender</code></td>
+                        <td>TEXT</td>
+                        <td>NOT NULL, CHECK (sender IN ('user', 'model'))</td>
+                        <td>Origine du message : 'user' pour l'utilisateur, 'model' pour l'IA.</td>
+                    </tr>
+                    <tr>
+                        <td><code>content</code></td>
+                        <td>TEXT</td>
+                        <td>NOT NULL</td>
+                        <td>Contenu textuel du message (peut contenir du Markdown).</td>
+                    </tr>
+                    <tr>
+                        <td><code>metadata</code></td>
+                        <td>JSONB</td>
+                        <td>NULLable</td>
+                        <td>Stockage flexible pour données additionnelles (ex: `{ "thinkingTimeMs": 1200,
+                            "originalQuery": "...", "citations": [...] }`).</td>
+                    </tr>
+                    <tr>
+                        <td><code>created_at</code></td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>NOT NULL, DEFAULT now()</td>
+                        <td>Date et heure de création du message.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Politiques RLS (<code>messages</code>) :</h4>
+            <ul>
+                <li><code>SELECT</code>: L'utilisateur authentifié peut lire les messages appartenant à ses propres
+                    conversations (en vérifiant le `user_id` de la `conversation` associée). Politique similaire pour
+                    anonyme.</li>
+                <li><code>INSERT</code>: L'utilisateur authentifié peut insérer des messages ('user' ou 'model') dans
+                    ses propres conversations. Politique similaire pour anonyme.</li>
+                <li><code>UPDATE</code> / <code>DELETE</code> : Généralement non autorisées pour maintenir l'intégrité
+                    de l'historique, sauf si une fonctionnalité d'édition/suppression est explicitement implémentée.
+                </li>
+            </ul>
+            <h4>Index (<code>messages</code>) :</h4>
+            <ul>
+                <li>Index sur `conversation_id` (et potentiellement `created_at`) pour accélérer le chargement de
+                    l'historique d'un chat.</li>
+            </ul>
+        </section>
+
+        <section id="deployment" class="main-section">
+            <h2>5. Configuration et Déploiement</h2>
+            <p>Cette section détaille les éléments nécessaires pour configurer l'environnement de développement et
+                déployer l'application Seshat v1.0.</p>
+            <h3>5.1. Prérequis</h3>
+            <ul>
+                <li><a href="https://nodejs.org/" target="_blank">Node.js</a> (version LTS recommandée) et gestionnaire
+                    de paquets (npm, yarn ou pnpm).</li>
+                <li>Un compte <a href="https://supabase.com/" target="_blank">Supabase</a> pour créer le projet backend
+                    (base de données, authentification).</li>
+                <li>Une clé API <a href="https://ai.google.dev/" target="_blank">Google AI (Gemini API)</a>.</li>
+                <li>Un compte <a href="https://vercel.com/" target="_blank">Vercel</a> et la <a
+                        href="https://vercel.com/docs/cli" target="_blank">Vercel CLI</a> (optionnelle mais utile).</li>
+                <li>Un client <a href="https://git-scm.com/" target="_blank">Git</a> pour la gestion de version et le
+                    déploiement.</li>
+            </ul>
+            <h3>5.2. Configuration Locale</h3>
+            <ol>
+                <li><strong>Cloner le Dépôt :</strong> Obtenir le code source depuis le dépôt Git.</li>
+                <li><strong>Installer les Dépendances :</strong> Exécuter <code>npm install</code> (ou
+                    <code>yarn install</code> / <code>pnpm install</code>) à la racine du projet.
+                </li>
+                <li><strong>Créer le Fichier d'Environnement :</strong> Créer un fichier <code>.env.local</code> à la
+                    racine du projet.</li>
+                <li><strong>Configurer les Variables d'Environnement :</strong> Ajouter les clés suivantes dans
+                    <code>.env.local</code> avec vos propres valeurs :
+                    <pre><code>NEXT_PUBLIC_SUPABASE_URL=VOTRE_URL_SUPABASE
+NEXT_PUBLIC_SUPABASE_ANON_KEY=VOTRE_CLE_ANON_SUPABASE
+GEMINI_API_KEY=VOTRE_CLE_API_GEMINI
+# SUPABASE_SERVICE_ROLE_KEY=VOTRE_CLE_SERVICE_SUPABASE
+</code></pre>
+                    <p><em>Note : La clé de service Supabase est très sensible. Évitez de la stocker directement dans
+                            <code>.env.local</code> si possible, surtout si le fichier est versionné.</em></p>
+                </li>
+                <li><strong>Appliquer le Schéma Supabase :</strong> Utiliser l'éditeur SQL de Supabase ou un outil de
+                    migration pour exécuter le script SQL contenant la création des tables (`profils`, `conversations`,
+                    `messages`), des fonctions (`handle_new_user`), des triggers et des politiques RLS.</li>
+                <li><strong>Lancer le Serveur de Développement :</strong> Exécuter <code>npm run dev</code> (ou
+                    <code>yarn dev</code> / <code>pnpm dev</code>). L'application Next.js (frontend et API Routes) sera
+                    accessible, généralement sur <code>https://seshat.feliciodev.xyz/</code>.
+                </li>
+            </ol>
+            <h3>5.3. Déploiement sur Vercel</h3>
+            <p>Vercel simplifie grandement le déploiement des applications Next.js.</p>
+            <ol>
+                <li><strong>Push sur Git :</strong> Assurez-vous que votre code est à jour sur votre dépôt Git (GitHub,
+                    GitLab, Bitbucket).</li>
+                <li><strong>Importer le Projet sur Vercel :</strong> Via le tableau de bord Vercel, importez votre dépôt
+                    Git. Vercel devrait automatiquement détecter qu'il s'agit d'un projet Next.js.</li>
+                <li><strong>Configurer les Variables d'Environnement :</strong> Allez dans les paramètres de votre
+                    projet sur Vercel (Settings -> Environment Variables) et ajoutez les mêmes variables que celles
+                    définies localement, en particulier les clés <strong>secrètes</strong> :<ul>
+                        <li><code>NEXT_PUBLIC_SUPABASE_URL</code> (non secrète)</li>
+                        <li><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> (non secrète)</li>
+                        <li><code>GEMINI_API_KEY</code> (secrète)</li>
+                        <li><code>SUPABASE_SERVICE_ROLE_KEY</code> (secrète)</li>
+                    </ul>
+                    <p><em>Attribuez ces variables aux environnements appropriés (Production, Preview,
+                            Development).</em></p>
+                </li>
+                <li><strong>Lancer le Déploiement :</strong> Vercel lancera automatiquement un build (`next build`) et
+                    déploiera l'application. Les API Routes seront déployées comme fonctions serverless.</li>
+                <li><strong>Accéder à l'Application :</strong> Une fois le déploiement réussi, Vercel fournira une URL
+                    de production (et des URLs de prévisualisation pour les branches/PRs).</li>
+            </ol>
+            <h4>Architecture sur Vercel</h4>
+            <ul>
+                <li><strong>Frontend :</strong> Les composants React et les assets statiques sont servis par le CDN
+                    global de Vercel.
+                </li>
+                <li><strong>Backend (API) :</strong> Chaque API Route (<code>/api/chat</code>,
+                    <code>/api/generate-title</code>)
+                    devient une fonction serverless indépendante, s'exécutant à la demande dans la région la plus proche
+                    de l'utilisateur ou configurée. Elles ont accès aux variables d'environnement secrètes.</li>
+                <li><strong>Base de Données / Auth :</strong> L'application interagit directement avec Supabase via les
+                    URL et clés
+                    configurées.</li>
+                <li><strong>IA :</strong> Les fonctions serverless API communiquent avec l'API Google Gemini.</li>
+            </ul>
+            <h3>5.4. Maintenance et Mise à Jour</h3>
+            <p>Les mises à jour sont déployées automatiquement par Vercel à chaque `git push` sur la branche principale
+                (ou selon la configuration de déploiement choisie).</p>
+        </section>
+
+        <section id="conclusion" class="main-section">
+            <h2>6. Conclusion et Perspectives</h2>
+            <p>La version 1.0 de Seshat représente une étape significative vers la création d'un assistant IA spécialisé
+                et puissant pour les créateurs de contenu. En combinant l'interface intuitive de Next.js/React, la
+                robustesse de Supabase pour le backend et l'intelligence de Google Gemini, cette version offre déjà un
+                outil capable de faciliter le processus créatif, de la génération d'idées à la structuration narrative.
+            </p>
+            <p>L'architecture choisie, basée sur des technologies modernes et un modèle serverless via Vercel, assure
+                non seulement de bonnes performances mais aussi une excellente base pour l'évolutivité future. La mise
+                en place de l'authentification sécurisée et des politiques RLS garantit la confidentialité des données
+                utilisateurs dès le départ.</p>
+            <h3>Points Forts de la v1.0</h3>
+            <ul>
+                <li>Intégration fonctionnelle de l'IA Gemini pour le chat et la génération de titres.</li>
+                <li>Interface de chat réactive avec historique persistant.</li>
+                <li>Système d'authentification et de gestion de profil complet.</li>
+                <li>Architecture moderne, serverless et scalable (Next.js, Supabase, Vercel).</li>
+                <li>Sécurité prise en compte dès la conception (RLS, variables secrètes).</li>
+                <li>Bonne expérience utilisateur pour le rendu Markdown des réponses IA.</li>
+            </ul>
+            <h3>Pistes d'Améliorations Futures (Post v1.0)</h3>
+            <p>Bien que fonctionnelle, Seshat v1.0 peut être enrichie par de nombreuses fonctionnalités pour devenir
+                encore plus indispensable :</p>
+            <ul>
+                <li><strong>Gestion Améliorée des Conversations :</strong> Ajout de dossiers, recherche dans les
+                    conversations, possibilité d'épingler ou d'archiver.</li>
+                <li><strong>Fonctionnalités d'Édition :</strong> Permettre l'édition des messages (utilisateur et/ou IA
+                    pour des prises de notes), sauvegarde de messages spécifiques comme "notes".</li>
+                <li><strong>Personnalisation de l'IA :</strong> Options pour choisir différents modèles Gemini, ajuster
+                    plus finement la température/personnalité, ou télécharger des instructions système personnalisées.
+                </li>
+                <li><strong>Collaboration :</strong> Fonctionnalités de partage de conversations ou de travail
+                    collaboratif.</li>
+                <li><strong>Fonctionnalités Pro / Abonnements :</strong> Développement des plans payants avec limites
+                    étendues, accès à des modèles plus puissants, ou fonctionnalités exclusives (nécessite une
+                    intégration Stripe plus poussée).</li>
+                <li><strong>Améliorations UI/UX :</strong> Thème clair/sombre commutable, amélioration de
+                    l'accessibilité, interface plus personnalisable.</li>
+                <li><strong>Exportation de Données :</strong> Finaliser la fonctionnalité d'exportation des
+                    conversations dans différents formats.</li>
+            </ul>
+            <p>En conclusion, Seshat v1.0 est une réalisation prometteuse. Les fondations techniques sont solides et
+                prêtes à accueillir les évolutions futures qui feront de Seshat un compagnon créatif de premier choix.
+            </p>
+        </section>
+
+    </div>
+
+</body>
+
+</html>
